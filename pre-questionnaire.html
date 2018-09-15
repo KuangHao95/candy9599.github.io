@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>Pre Questionnaire Page</title>
+
+<!-- Breadcrumbs Menu Stylesheet -->
+<link id="Breadcrumbs" href="./css/style.css" rel="stylesheet">
+<link id="container" href="./css/bootstrap.min.css" rel ="stylesheet">
+    <!--
+    <script src="js/prefixfree.min.js"></script>
+  -->
+</head>
+
+<body>
+
+<div class='breadcrumbs'>
+  <div class='inner'>
+    <ul class='cf'>
+      <li>
+        <a>
+          <span>1</span>
+          <span>Welcome</span>
+        </a>
+      </li>
+      <li>
+        <a class='active'>
+          <span>2</span>
+          <span>Pre Questionnaire</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span>3</span>
+          <span>Instructions</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span>4</span>
+          <span>Experiment</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span>5</span>
+          <span>Post Interview</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <h1>Pre-Experiment Questionnaire</h1>
+                    <hr>
+                    <p>This part of the interface collects participants` information.</p>
+
+                    <p>Please answer the following questions, participant:  <span class="js-pid pid"></span></p>
+
+                    <form id="pre-expt-form">
+                        <div class="form-group">
+                            <label for="q1">Question 1 - What is your name?</label>
+                            <input type="text" class="form-control" id="q1" name="Name" placeholder="Enter your name">
+                        </div>
+                        <div class="form-group">
+                            <label for="Gender">Question 2 - What is your gender?</label>
+                            <div class="radio">
+                              <label>
+                                <input type="radio" name="Gender" id="optionsRadios1" value="Male">
+                                Male
+                              </label>
+                            </div>
+                            <div class="radio">
+                              <label>
+                                <input type="radio" name="Gender" id="optionsRadios2" value="Female">
+                                Female
+                              </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="q3">Question 3 - How old are you?</label>
+                            <input type="text" class="form-control" id="q3" name="Age" placeholder="Enter your age">
+                        </div>
+                        <div class="form-group">
+                            <label for="q4">Question 4 - What is your education level?</label>
+                            <select class="form-control" name="Education Level">
+                                <option value="Non-educated">Non-educated</option>
+                                <option value="Primary School">Primary School</option>
+                                <option value="Middle School">Middle School</option>
+                                <option value="High School">High School</option>
+                                <option value="University">University</option>
+                                <option value="Post Graduate and More">Post Graduate and More</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="q5">Question 5 - What is your occupation?</label>
+                            <input type="text" class="form-control" id="q5" name="Occupation" placeholder="Enter your occupation">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                    </form>
+                </div>
+            </div>
+</div>
+
+<div style="text-align:center;clear:both"></div>
+
+<script src="./js/external/jquery-3.3.1.min.js"></script>
+<script src="./js/ACPToolKit.js"></script>
+<script src="./js/DataStorage.js"></script>
+<script>
+            $(function () {
+                $('#pre-expt-form').submit(function (event) {
+                    event.preventDefault();
+                    var formResponses = $(this).serializeArray();
+                      ACPToolKit.downloadFormData(formResponses, 'pre');
+                      window.location = 'instructions.html';
+                });
+            });
+        </script>
+
+</body>
+
+</html>

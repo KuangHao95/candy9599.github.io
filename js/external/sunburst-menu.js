@@ -25,8 +25,8 @@
 
 var module = {};
 var radialmenu = null;
-module.exports = (function d3_sunburst_menu(tree, n, container) {
-    var radius = _radius = 140;
+module.exports = (function d3_sunburst_menu(tree, n, container,ra) {
+    var radius = _radius = ra;
     var rotate = _rotate = Math.PI / 2;
     var hue = d3.scale.category10(); // if node parents don't specify a fill attribute (i.e. a color)
     var backSize = 0; // back button size as percent of full circle

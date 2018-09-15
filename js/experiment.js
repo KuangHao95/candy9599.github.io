@@ -21,6 +21,9 @@ var radialMenuL3 = [];
 var tracker = new ExperimentTracker();
 var markingMenuSubscription = null;
 var radialMenuSvg = null;
+var radius = 0;
+var participantId = null;
+
 
 
 
@@ -47,10 +50,12 @@ function initExperiment() {
 		var cells = records[i].split(",");
 		var menuType = cells[0].trim();
 		var menuDepth = cells[1].trim();
-		var targetItem = cells[2].trim();
+		var menuSize = cells[2].trim();
+		var targetItem = cells[3].trim();
 		trialsData[i] = {
 			'Menu Type': menuType,
 			'Menu Depth': menuDepth,
+			'Menu Size': menuSize,
 			'Target Item': targetItem
 		};
 	}
@@ -64,9 +69,9 @@ function initExperiment() {
 	markingMenuL1 = formatMarkingMenuData(menuL1Data);
 	markingMenuL2 = formatMarkingMenuData(menuL2Data);
 	markingMenuL3 = formatMarkingMenuData(menuL3Data);
-	radialMenuL1 = formatRadialMenuData(menuL1Data);
-	radialMenuL2 = formatRadialMenuData(menuL2Data);
-	radialMenuL3 = formatRadialMenuData(menuL3Data);
+	radialMenuL1 = formatRadialMenuData(menuL1Data,menuDepth);
+	radialMenuL2 = formatRadialMenuData(menuL2Data,menuDepth);
+	radialMenuL3 = formatRadialMenuData(menuL3Data,menuDepth);
 	
 	//Start the first trial
 	nextTrial();
@@ -88,6 +93,7 @@ function nextTrial() {
 		var menuType = trialsData[currentTrial]['Menu Type'];
 		var menuDepth = trialsData[currentTrial]['Menu Depth'];
 		var targetItem = trialsData[currentTrial]['Target Item'];
+		var menuSize = trialsData[currentTrial]['Menu Size'];
 
 		document.getElementById("trialNumber").innerHTML = String(currentTrial) + "/" + String(numTrials);
 		document.getElementById("menuType").innerHTML = menuType;
@@ -95,12 +101,42 @@ function nextTrial() {
 		document.getElementById("targetItem").innerHTML = targetItem;
 		document.getElementById("selectedItem").innerHTML = "&nbsp;";
 		// Set IV3 state over here
+		document.getElementById("menuSize").innerHTML = menuSize;
+
+		//Remove to avoid conflicts
+		$('#medium-style').remove();
+		$('#small-style').remove();
+		$('#large-style').remove();
+
+		//Change my IV: menu size
+		//I use CSS to change marking menu size. Because as the author comments on github,
+		//changing size is still a further issue with no such function included in the source code.
+		if (menuSize === "Medium") {
+			$('head').append('<link id="medium-style" href="./css/external/marking-menu.css" rel="stylesheet">');
+		} else if (menuSize === "Small") {
+			$('head').append('<link id="small-style" href="./css/external/marking-menu-small.css" rel="stylesheet">');
+		} else {
+			$('head').append('<link id="large-style" href="./css/external/marking-menu-large.css" rel="stylesheet">');
+		}
+
+		//Change global variable radius according to which experiment read in the experiment.csv
+		if(menuSize === "Small") {
+			//70 makes texts too small to choose.
+			radius = 80;
+		}else if(menuSize === "Medium") {
+			radius = 140;
+		}else if(menuSize === "Large") {
+			radius = 200;
+		}
+		participantId = localStorage.getItem("pid");
 
 		tracker.newTrial();
 		tracker.trial = currentTrial;
 		tracker.menuType = menuType;
 		tracker.menuDepth = menuDepth;
 		tracker.targetItem = targetItem;
+		tracker.menuSize = menuSize;
+		tracker.participantId = participantId;
 
 		if (menuType === "Marking") {
 				
@@ -108,28 +144,25 @@ function nextTrial() {
 			
 			if(menuDepth == 1){
 				menu = MarkingMenu(markingMenuL1, document.getElementById('marking-menu-container'));
-			}
-			else if(menuDepth == 2){
+			}else if(menuDepth == 2){
 				menu = MarkingMenu(markingMenuL2, document.getElementById('marking-menu-container'));
 			}else if(menuDepth == 3){
 				menu = MarkingMenu(markingMenuL3, document.getElementById('marking-menu-container'));
 			}
 
-			markingMenuSubscription = menu.subscribe((selection) => markingMenuOnSelect(selection));
+			markingMenuSubscription = menu.subscribe((selection) => markingMenuOnSelect(selection,menuDepth));
 
 		} else if (menuType === "Radial") {
 
-			initializeRadialMenu();			
-			if (menuDepth == 1){
+			initializeRadialMenu();
+
+			if (menuDepth === "1"){
 				menu = createRadialMenu(radialMenuL1);
-			}
-			else if(menuDepth == 2){
+			}else if(menuDepth === "2"){
 				menu = createRadialMenu(radialMenuL2);
-			}else if(menuDepth == 3){
+			}else if(menuDepth === "3"){
 				menu = createRadialMenu(radialMenuL3);
 			}
-
-
 		}
 
 		currentTrial++;
@@ -137,7 +170,10 @@ function nextTrial() {
 		
 	    var nextButton = document.getElementById("nextButton");
 	    nextButton.innerHTML = "Done";
-		tracker.toCsv();
+	    //participantId = localStorage.getItem("pid");
+	    //tracker.setId(participantId);
+	    tracker.toCsv();
+	    window.location = "post-interview.html";
 	}
 }
 
@@ -148,7 +184,7 @@ function nextTrial() {
 /*Functions related to MarkingMenu*/
 
 // Reconstructs marking menu container
-function initializeMarkingMenu(){
+function initializeMarkingMenu( ){
 	
 	//Unload Radial Menu
 	var radialMenuContainer = document.getElementById('radial-menu-container');
@@ -209,12 +245,18 @@ function formatMarkingMenuData(data) {
 
 // Function to start tracking timer on mouse down
 function markingMenuOnMouseDown(){
-
+	//console.log(1)
 	tracker.startTimer();
 }
 
-//Function to start tracking timer on mouse down
-function markingMenuOnSelect(selectedItem){
+//Function to stop tracking timer on mouse down
+function markingMenuOnSelect(selectedItem, Depth){
+
+	//My DV: Read Time
+	//It is the time participants take to read the menu. It is only recorded the first time a menu shows up.
+	if(Depth === "1") {
+		tracker.readTimer(true);
+	}else tracker.readTimer(false);
 
 	tracker.recordSelectedItem(selectedItem.name);
 	document.getElementById("selectedItem").innerHTML = selectedItem.name;
@@ -228,7 +270,7 @@ function preventRightClick(e){
 /*Functions related to RadialMenu*/
 
 // Reconstructs radial menu container
-function initializeRadialMenu(){
+function initializeRadialMenu( ){
 	
 	// Unload Marking Menu
 	if (markingMenuSubscription != null) {
@@ -239,15 +281,12 @@ function initializeRadialMenu(){
 		markingMenuContainer.parentNode.removeChild(markingMenuContainer);
 	}
 	
-	
-
 	// Reload Radial Menu
 	var interactionContainer = document.getElementById('interaction-container');
 	var radialMenuContainer = document.getElementById('radial-menu-container');
 	if(radialMenuContainer == null){
 		interactionContainer.innerHTML += "<div id=\"radial-menu-container\" style=\"height:100%;width:100%\" oncontextmenu=\"toggleRadialMenu(event)\"></div>";
-	}
-
+		}
 }
 
 // Create radial menu svg element
@@ -258,10 +297,10 @@ function createRadialMenu(radialMenuL){
     	radialmenuElement.parentNode.removeChild(radialmenuElement);
     }
 	
-	
 	var w = window.innerWidth;
 	var h = window.innerHeight;
 	var radialMenuSvgElement = document.getElementById('radial-menu-svg');
+
 	if (radialMenuSvgElement != null){
 		radialMenuSvgElement.parentNode.removeChild(radialMenuSvgElement);
 	}
@@ -276,10 +315,13 @@ function toggleRadialMenu(e) {
 	if(tracker.startTime == null){
 	
 		if(radialMenuTree != null){
+				//Change my IV: menu size
+				//I can`t find a good way to get access to 'radius', so I rewrite external/sunburst-menu.js
+				//to change the size of radial menu.
 				menu = module.exports(radialMenuTree, {
 					x: e.clientX,
 					y: e.clientY
-				}, radialMenuSvg);
+				}, radialMenuSvg,radius);
 		
 			// Start timing once menu appears
 			tracker.startTimer();
@@ -293,7 +335,7 @@ function toggleRadialMenu(e) {
 			menu = module.exports(radialMenuTree, {
 				x: e.clientX,
 				y: e.clientY
-			}, radialMenuSvg);
+			}, radialMenuSvg,radius);
 	
 		// Start timing once menu appears
 		tracker.startTimer();
@@ -304,7 +346,15 @@ function toggleRadialMenu(e) {
 
 //Callback for radialmenu when a leaf node is selected
 function radialMenuOnSelect() {
+	/*if(Depth === "1") {
+		tracker.readTimer(true);
+	}else tracker.readTimer(false);*/
 
+	//My DV: Read Time
+	//It is the time participants take to read the menu. It is only recorded the first time a menu shows up.
+	//Due to callback function features, it`s harder to detect menu levels in this function. So I put
+	//readTimer() here, but only the first level data collected are useful.
+	tracker.readTimer(true);
 	tracker.recordSelectedItem(this.id);
 	var radialmenu = document.getElementById('radialmenu');
 	radialmenu.parentNode.removeChild(radialmenu);

@@ -1,76 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="no-js" lang="">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
 
-    <title>Experiment to compare Marking and Radial menus</title>
+    <title>Welcome Page</title>
 
-	<!-- Marking Menu Stylesheet -->
-   <link href="./css/external/marking-menu.css" rel="stylesheet">
-	<!-- Fonts -->
-	<link href='https://fonts.googleapis.com/css?family=Stint+Ultra+Condensed' rel='stylesheet' type='text/css'>
-	<!-- Experiment Stylesheet -->
-	<link href="./css/experiment.css" rel="stylesheet"> 
+<!-- Breadcrumbs Menu Stylesheet -->
+<link id="Breadcrumbs" href="./css/style.css" rel="stylesheet">
+<link id="container" href="./css/bootstrap.min.css" rel ="stylesheet">
+    <!--
+    <script src="js/prefixfree.min.js"></script>
+  -->
+</head>
 
+<body>
 
-  </head>
-  <body onload="initExperiment()" >
+<div class='breadcrumbs'>
+  <div class='inner'>
+    <ul class='cf'>
+      <li>
+        <a class='active'>
+          <span>1</span>
+          <span>Welcome</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span>2</span>
+          <span>Pre Questionnaire</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span>3</span>
+          <span>Instructions</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span>4</span>
+          <span>Experiment</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span>5</span>
+          <span>Post Interview</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
 
-	<!-- State Div -->
-    <div class="row" id="state-container">
-      <div class="cellstate">
-	<span class="label label-primary">Trial</span>
-	<span class="label label-default" id="trialNumber">&nbsp;</span>
-      </div>
-      <div class="cellstate">
-      <span class="label label-primary">Menu Type</span>
-	<span class="label label-default" id="menuType">&nbsp;</span>
-      </div>
-      <div class="cellstate">
-        <span class="label label-primary">Menu Depth</span>
-	<span class="label label-default" id="menuDepth">&nbsp;</span>
-      </div>
-      <div class="cellstate">
-        <span class="label label-primary">IV 3</span>
-	<span class="label label-default">To be implemented</span>
-      </div>
-            <div class="cellstimulusresponse">
-        <span class="label label-primary">Please select</span>
-	<span class="label label-default" id="targetItem">&nbsp;</span>
-      </div>
-        <div class="cellstimulusresponse">
-        <span class="label label-primary">Item selected</span>
-	<span class="label label-default" id="selectedItem">&nbsp;</span>
-      </div>            
-        <div class="cellnext">
-      		<button id="nextButton" type="button" class="btn btn-block btn-primary btn-lg" onclick="loadNextTrial(event)">Next</button>
-      </div>      
-    </div>
+<div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <h1>Welcome!</h1>
+                    <hr>
+                    <p>The experiment aims to compare two different types of menus: <strong>Marking Menu</strong> and <strong>Radial Menu</strong>.<br>
+                    It will take you no more than 15 minutes. Thank you for your participation.</p>
 
-<!--  Interaction Div-->
+                    <p>Please write your participant number ID given by Kuang Hao. Then click submit to proceed to instruction page</p>
+                    <form class="form-inline" id="pid-form">
+                        <div class="form-group">
+                            <label for="pid">Participant ID</label>
+                            <input name="pid" type="text" class="form-control" id="pid" placeholder="E.g. P01">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+</div>
 
-	<div class="row" id="interaction-container"  >
-	</div>
+<div style="text-align:center;clear:both"></div>
 
-
-
-  </body>
-    
-    
-    <!-- Marking Menu Scripts -->
-    <script src="./js/external/jquery-3.3.1.min.js"></script>
-    <script src="./js/external/rxjs.umd.js"></script>
-  	<script src="./js/external/marking-menu.js"></script>
-    
-    <!-- Radial Menu Scripts -->
-    <script src="./js/external/d3.min.js" ></script>
-    <script src="./js/external/es6-promise.auto.min.js"></script>
-    <script src="./js/external/sunburst-menu.js"></script>
-    
-    <!-- Experiment Scripts -->
+<script src="./js/external/jquery-3.3.1.min.js"></script>
+<script src="./js/DataStorage.js"></script>
+<script src="./js/ACPToolKit.js"></script>
+<!-- Experiment Scripts -->
     <script src="./js/experiment-tracker.js"></script>
     <script src="./js/experiment.js"></script>
+<script>
+            $(function () {
+                $('#pid-form').submit(function (event) {
+                    event.preventDefault();
+                    var participantId = $('#pid').val();
+                    localStorage.setItem('pid', participantId);
+                    if (participantId) {
+                        ACPToolKit.setCurrentParticipantId(participantId);
+                        window.location = 'pre-questionnaire.html';
+                    } else {
+                        alert('Please enter a valid Participant ID!');
+                    }
+                });
+            });
+        </script>
+
+</body>
 
 </html>

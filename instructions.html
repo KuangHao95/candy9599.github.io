@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>Instructions Page</title>
+
+<!-- Breadcrumbs Menu Stylesheet -->
+<link id="Breadcrumbs" href="./css/style.css" rel="stylesheet">
+<link id="container" href="./css/bootstrap.min.css" rel ="stylesheet">
+    <!--
+    <script src="js/prefixfree.min.js"></script>
+  -->
+</head>
+
+<body>
+
+<div class='breadcrumbs'>
+  <div class='inner'>
+    <ul class='cf'>
+      <li>
+        <a>
+          <span>1</span>
+          <span>Welcome</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span>2</span>
+          <span>Pre Questionnaire</span>
+        </a>
+      </li>
+      <li>
+        <a class='active'>
+          <span>3</span>
+          <span>Instructions</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span>4</span>
+          <span>Experiment</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span>5</span>
+          <span>Post Interview</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <h1>Instructions</h1>
+                    <hr>
+                    <p>Dear participant <span class="js-pid pid"></span>, please read the instructions before the experiment.
+
+                    <p>You will be tasked to select specific items with different menus under different conditions.</p> 
+                    <p><strong>MARKING MENU:</strong></p>
+                    <div style="text-align: center; width: 500px; border: green solid 1px;">
+                    <img src="images/instructions1.png" alt="" style="margin: 0 auto;"></div>
+                    <p>1. Press and <strong>hold</strong> left or right button of the mouse in the white block with yellow borders until a marking menu is shown.<br>
+                    2. For menu with single depth, <strong>hold and drag</strong> your mouse to target word, release when the word you want to select is highlighted.<br>
+                    3. For menu with multiple depth, hold and drag your mouse to a category which contains your target word, repeat the above step and release till the target word is highlighted.<br>
+                    4. After finishing selecting, click <strong>next</strong> to continue the experiment.</p>
+                    <p><strong>RADIAL MENU:</strong>:</p>
+                    <div style="text-align: center; width: 500px; border: green solid 1px;">
+                    <img src="images/instructions2.png" alt=""  style="margin: 0 auto;"></div>
+                    <p>1. Click the <strong>right</strong> mouse button to show the radial menu.<br>
+                    2. For menu with single depth, <strong>click the left mouse</strong> button to select your target word.<br>
+                    3. For menu with multiple depth, click a category which contains your target word, repeat till the target word shows up and click the left mouse button to select your target word.<br>
+                    4. After finishing selecting, click next to continue the experiment.</p>
+
+                    <form class="form-inline">
+                        <button type="submit" class="btn btn-primary btn-lg">Next</button>
+                        <p></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+<div style="text-align:center;clear:both"></div>
+
+<script src="./js/external/jquery-3.3.1.min.js"></script>
+<script>
+            $(function () {
+                $('form').submit(function (event) {
+                    event.preventDefault();
+                    window.location = 'experiment.html';
+                });
+            });
+        </script>
+
+</body>
+
+</html>
