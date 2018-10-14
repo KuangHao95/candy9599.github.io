@@ -42,7 +42,7 @@ function getData(relativePath) {
 function initExperiment() {
 
 	// Get Trails
-	var data = getData(trialsFile);
+  	var data = getData(trialsFile);
 
 	var records = data.split("\n");
 	numTrials = records.length - 1;
